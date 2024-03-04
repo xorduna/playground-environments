@@ -1,0 +1,8 @@
+name: 'Set Build Version'
+description: 'Sets the build version as environment variable'
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        echo "buildVersion=$(echo $GITHUB_REF_NAME)_$(echo $GITHUB_SHA | head -c7)" >> "$GITHUB_ENV"
+      shell: bash

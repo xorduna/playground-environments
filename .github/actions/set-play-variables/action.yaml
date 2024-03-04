@@ -1,0 +1,22 @@
+name: 'Set Playground Variables'
+description: 'Sets the some variables to be used in playground environments'
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        PLAY_buildVersion=$(echo $GITHUB_REF_NAME)_$(echo $GITHUB_SHA | head -c7)
+        echo "PLAY_buildVersion=$PLAY_buildVersion" >> "$GITHUB_ENV"
+        PLAY_ENV=play-${GITHUB_REF_NAME:0:25}
+        echo "PLAY_ENV=$PLAY_ENV" >> "$GITHUB_ENV"
+        PLAY_ENV=`echo "PLAY_ENV" | tr - _`
+        echo "PLAY_DATABASE=$PLAY_DATABASE" >> "$GITHUB_ENV"
+        export PLAY_HOSTNAME=$PLAY_ENV.pe.maulabs.cat
+
+         echo "PLAY_HOSTNAME=$PLAY_HOSTNAME" >> "$GITHUB_ENV"
+        export PLAY_POSTGRES_URI=${{ secrets.DEV_POSTGRES }}/$PLAY_DATABASE
+        echo "PLAY_POSTGRES_URI=$PLAY_POSTGRES_URI" >> "$GITHUB_ENV"
+        export PLAY_REDIS_URI=${{ secrets.DEV_REDIS }}/${GITHUB_REF_NAME%%-*}
+        echo "PLAY_REDIS_URI=$PLAY_REDIS_URI" >> "$GITHUB_ENV"
+        DYNAMIC_ENVIRONMENT_URL=https://$BRANCH_HOSTNAME
+
+      shell: bash
