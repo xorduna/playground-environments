@@ -1,0 +1,27 @@
+name: Build and Deploy Playground
+
+on:
+  push:
+    branches-ignore:
+      - main  # Ignora la branca main
+  pull_request:
+    branches-ignore:
+      - main  # Ignora la branca main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get Vars
+        run: export
+
+      - name: Build the Docker image
+        run: echo Hello, world!
+
+      - name: Run a multi-line script
+        run: |
+          echo Add other commands you want to run here
+          echo This is a multi-line script
