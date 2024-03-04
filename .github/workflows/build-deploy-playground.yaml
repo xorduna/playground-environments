@@ -24,9 +24,13 @@ jobs:
           echo "PLAY_ENV=$PLAY_ENV" >> "$GITHUB_ENV"
           PLAY_ENV=`echo "PLAY_ENV" | tr - _`
           echo "PLAY_DATABASE=$PLAY_DATABASE" >> "$GITHUB_ENV"
-          export PLAY_HOSTNAME=$PLAYGROUND_ENV.pe.maulabs.cat
+          export PLAY_HOSTNAME=$PLAY_ENV.pe.maulabs.cat
           echo "PLAY_HOSTNAME=$PLAY_HOSTNAME" >> "$GITHUB_ENV"
-
+          export PLAY_POSTGRES_URI=$DEV_POSTGRES/$PLAY_DATABASE
+          echo "PLAY_POSTGRES_URI=$PLAY_POSTGRES_URI" >> "$GITHUB_ENV"
+          export PLAY_REDIS_URI=$DEV_REDIS/${GITHUB_REF_NAME%%-*}
+          echo "PLAY_REDIS_URI=$PLAY_REDIS_URI" >> "$GITHUB_ENV"
+          DYNAMIC_ENVIRONMENT_URL=https://$BRANCH_HOSTNAME
       - name: Get Vars
         run: export
 
@@ -37,23 +41,22 @@ jobs:
 #  POSTGRES_URI=$PLAYGROUND_PG/$BRANCH_DATABASE
 #  REDIS_URI=$DEV_REDIS/${CI_COMMIT_REF_SLUG%%-*}
 #  BRANCH_HOSTNAME=$PLAYGROUND_ENV.p.mycircutor.com
-#  DYNAMIC_ENVIRONMENT_URL=https://$BRANCH_HOSTNAME
+#
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-
       - name: Build the Docker image
         run: |
-          make build-api VERSION=$buildVersion
+          make build-api VERSION=$PLAY_buildVersion
 
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 1200
 
       - name: Push the Docker image
-        run: make push-api VERSION=$buildVersion
+        run: make push-api VERSION=$PLAY_buildVersion
 
       - name: Run a multi-line script
         run: |
