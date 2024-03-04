@@ -73,6 +73,8 @@ jobs:
           echo "PLAY_POSTGRES_URI=$PLAY_POSTGRES_URI" >> "$GITHUB_ENV"
       - name: Get Vars
         run: export
+      - name: Setup cluster with short lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 mailer-cluster
       - name: Check cluster
         run: |
           kubectl get nodes
