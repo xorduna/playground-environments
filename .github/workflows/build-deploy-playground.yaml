@@ -39,7 +39,19 @@ jobs:
     name: Prepare Database
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/set-build-version
       - uses: ./.github/actions/set-play-variables
       - name: Prepare Database
         run: |
           echo "SELECT 'CREATE DATABASE $PLAY_DATABASE' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$PLAY_DATABASE')\gexec" | psql $DEV_POSTGRES
+
+  deploy:
+    name: Deploy Playground
+    runs-on: ubuntu-latest
+    needs: [build, prepare-database]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy Playground
+        run: |
+          echo "Deploying $buildVersion to $PLAY_HOSTNAME using DATABASE $DEV_POSTGRES/$PLAY_DATABASE"
