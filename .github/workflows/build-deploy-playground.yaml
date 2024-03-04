@@ -47,7 +47,7 @@ jobs:
           export PLAY_POSTGRES_URI=${{ secrets.DEV_POSTGRES }}/$PLAY_DATABASE
           echo "PLAY_POSTGRES_URI=$PLAY_POSTGRES_URI" >> "$GITHUB_ENV"
       - name: Install PostgreSQL client
-        run: apt-get update && apt-get install -y --no-install-recommends postgresql-client
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client
       - name: Prepare Database
         run: |
           echo "SELECT 'CREATE DATABASE $PLAY_DATABASE' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$PLAY_DATABASE')\gexec" | psql $DEV_POSTGRES
