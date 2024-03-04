@@ -18,10 +18,14 @@ jobs:
       - name: Get Vars
         run: export
 
+      - name: Set Vars
+        run: |
+          echo "buildVersion=$(echo $GITHUB_REF_NAME)_$(echo $GITHUB_SHA | head -c7)" >> "$GITHUB_ENV"
+
       - name: Build the Docker image
-        run: echo Hello, world!
+        run: |
+          make build-api VERSION=$buildVersion
 
       - name: Run a multi-line script
         run: |
-          echo Add other commands you want to run here
-          echo This is a multi-line script
+          export
