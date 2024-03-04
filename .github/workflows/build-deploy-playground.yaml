@@ -65,10 +65,19 @@ jobs:
     needs: [build, prepare-database]
     steps:
       - uses: actions/checkout@v2
+      - uses: ./.github/actions/set-build-version
+      - uses: ./.github/actions/set-play-variables
       - name: Set secret URIS
         run: |
           export PLAY_POSTGRES_URI=${{ secrets.DEV_POSTGRES }}/$PLAY_DATABASE
           echo "PLAY_POSTGRES_URI=$PLAY_POSTGRES_URI" >> "$GITHUB_ENV"
+      - name: Get Vars
+        run: export
+      - name: Check cluster
+        run: |
+          kubectl get nodes
+          helm list --all-namespaces
+
       - name: Deploy Playground
         run: |
           echo "Deploying $buildVersion to $PLAY_HOSTNAME using DATABASE $DEV_POSTGRES/$PLAY_DATABASE"
