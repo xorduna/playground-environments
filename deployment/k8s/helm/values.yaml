@@ -17,3 +17,4 @@ api:
   tag: "stable"
   port: 1323
   replicaCount: 1
+
