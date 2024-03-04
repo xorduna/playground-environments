@@ -9,13 +9,10 @@ on:
       - main  # Ignora la branca main
 
 jobs:
-  build:
+  set-vars:
+    name: Set Vars
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-
-
       - name: Set Vars
         run: |
           PLAY_buildVersion=$(echo $GITHUB_REF_NAME)_$(echo $GITHUB_SHA | head -c7)
@@ -25,12 +22,21 @@ jobs:
           PLAY_ENV=`echo "PLAY_ENV" | tr - _`
           echo "PLAY_DATABASE=$PLAY_DATABASE" >> "$GITHUB_ENV"
           export PLAY_HOSTNAME=$PLAY_ENV.pe.maulabs.cat
-          echo "PLAY_HOSTNAME=$PLAY_HOSTNAME" >> "$GITHUB_ENV"
+          
+           echo "PLAY_HOSTNAME=$PLAY_HOSTNAME" >> "$GITHUB_ENV"
           export PLAY_POSTGRES_URI=${{ secrets.DEV_POSTGRES }}/$PLAY_DATABASE
           echo "PLAY_POSTGRES_URI=$PLAY_POSTGRES_URI" >> "$GITHUB_ENV"
           export PLAY_REDIS_URI=${{ secrets.DEV_REDIS }}/${GITHUB_REF_NAME%%-*}
           echo "PLAY_REDIS_URI=$PLAY_REDIS_URI" >> "$GITHUB_ENV"
           DYNAMIC_ENVIRONMENT_URL=https://$BRANCH_HOSTNAME
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+
       - name: Get Vars
         run: export
 
@@ -52,3 +58,10 @@ jobs:
       - name: Run a multi-line script
         run: |
           export
+  prepare-database:
+    name: Prepare Database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare Database
+        run: |
+          echo "SELECT 'CREATE DATABASE $PLAY_DATABASE' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$PLAY_DATABASE')\gexec" | psql $DEV_POSTGRES
