@@ -73,6 +73,10 @@ jobs:
           echo "PLAY_POSTGRES_URI=$PLAY_POSTGRES_URI" >> "$GITHUB_ENV"
       - name: Get Vars
         run: export
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: Setup cluster with short lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 mailer-cluster
       - name: Check cluster
