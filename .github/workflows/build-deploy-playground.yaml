@@ -25,6 +25,7 @@ jobs:
       - name: Build the Docker image
         run: |
           make build-api VERSION=$buildVersion
+          make push-api VERSION=$buildVersion
 
       - name: Run a multi-line script
         run: |
