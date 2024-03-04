@@ -51,6 +51,7 @@ jobs:
       - name: Prepare Database
         run: |
           echo "SELECT 'CREATE DATABASE $PLAY_DATABASE' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$PLAY_DATABASE')\gexec" | psql ${{ secrets.DEV_POSTGRES }}
+          echo "DONE"
 
   deploy:
     name: Deploy Playground
