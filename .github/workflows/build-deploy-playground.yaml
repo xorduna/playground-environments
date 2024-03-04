@@ -22,6 +22,7 @@ jobs:
           export PLAY_PLAYGROUND_ENV=play-${GITHUB_REF_NAME:0:25}
           export PLAY_BRANCH_DATABASE=`echo "$PLAYGROUND_ENV" | tr - _`
           export PLAY_BRANCH_HOSTNAME=$PLAYGROUND_ENV.pe.maulabs.cat
+          export | grep '^declare -x PLAY_' | sed 's/declare -x PLAY_//g'
           export | grep '^declare -x PLAY_' | sed 's/declare -x PLAY_//g' >> "$GITHUB_ENV"
 
       - name: Get Vars
