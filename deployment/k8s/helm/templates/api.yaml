@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-att-api
+spec:
+  replicas: {{ .Values.api.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-att-api
+  template:
+    metadata:
+      labels:
+        name: {{ .Release.Name }}-att-api
+        app: {{ .Release.Name }}-att-api
+        releaseTime: {{ .Values.global.releaseTime }}
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: api
+          image: "{{ .Values.global.registry }}/{{ .Values.api.repository }}:{{ .Values.api.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          env:
+            - name: VERSION
+              value: "{{ .Values.api.tag }}"
+            - name: DB_URI
+              value: "{{ .Values.db.uri }}"
+          ports:
+            - name: att-api-port
+              containerPort: {{ .Values.api.port }}
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: {{ .Values.api.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: {{ .Values.api.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-att-api-svc
+spec:
+  selector:
+    app: {{ .Release.Name }}-att-api
+  ports:
+    - name: mm-api
+      port: {{ .Values.api.port }}
+      targetPort: mm-api-port
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-att-api-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: acme-do-issuer
+    konghq.com/protocols: "https"
+    konghq.com/https-redirect-status-code: "308"
+spec:
+  ingressClassName: kong
+  tls:
+    - secretName: {{ .Values.global.host }}
+      hosts:
+        - {{ .Values.global.host }}
+  rules:
+    - host: {{ .Values.global.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-att-api-svc
+                port:
+                  number: {{ .Values.api.port }}
+

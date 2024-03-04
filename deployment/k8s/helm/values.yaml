@@ -1,0 +1,19 @@
+global:
+  releaseTime: "epoch"
+  env: "local"
+  container: registry.digitalocean.com/maulabs
+  host: "localhost"
+  imagePullPolicy: "Always"
+
+
+db:
+  uri: "postgres://postgres:postgres@localhost:5432/postgres"
+
+redis:
+  uri: "redis://localhost:6379/0"
+
+api:
+  repository: "attendance-api"
+  tag: "stable"
+  port: 1323
+  replicaCount: 1
