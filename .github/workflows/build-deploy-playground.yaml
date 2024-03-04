@@ -18,14 +18,14 @@ jobs:
 
       - name: Set Vars
         run: |
-          buildVersion=$(echo $GITHUB_REF_NAME)_$(echo $GITHUB_SHA | head -c7)
-          echo "buildVersion=$buildVersion" >> "$GITHUB_ENV"
-          PLAYGROUND_ENV=play-${GITHUB_REF_NAME:0:25}
-          echo "PLAYGROUND_ENV=$PLAYGROUND_ENV" >> "$GITHUB_ENV"
-          export BRANCH_DATABASE=`echo "$PLAYGROUND_ENV" | tr - _`
-          echo "BRANCH_DATABASE=$PLAY_BRANCH_DATABASE" >> "$GITHUB_ENV"
-          export BRANCH_HOSTNAME=$PLAYGROUND_ENV.pe.maulabs.cat
-          echo "BRANCH_HOSTNAME=$BRANCH_HOSTNAME" >> "$GITHUB_ENV"
+          PLAY_buildVersion=$(echo $GITHUB_REF_NAME)_$(echo $GITHUB_SHA | head -c7)
+          echo "PLAY_buildVersion=$PLAY_buildVersion" >> "$GITHUB_ENV"
+          PLAY_ENV=play-${GITHUB_REF_NAME:0:25}
+          echo "PLAY_ENV=$PLAY_ENV" >> "$GITHUB_ENV"
+          PLAY_ENV=`echo "PLAY_ENV" | tr - _`
+          echo "PLAY_DATABASE=$PLAY_DATABASE" >> "$GITHUB_ENV"
+          export PLAY_HOSTNAME=$PLAYGROUND_ENV.pe.maulabs.cat
+          echo "PLAY_HOSTNAME=$PLAY_HOSTNAME" >> "$GITHUB_ENV"
 
       - name: Get Vars
         run: export
