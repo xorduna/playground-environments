@@ -22,7 +22,7 @@ jobs:
         run: |
           buildVersion=$(echo $GITHUB_REF_NAME)_$(echo $GITHUB_SHA | head -c7)
           echo "buildVersion=$buildVersion" >> "$GITHUB_ENV"
-          PLAYGROUND_ENV=play-$(echo $GITHUB_REF_NAME):0:25
+          PLAYGROUND_ENV=play-${GITHUB_REF_NAME:0:25}
           echo $PLAYGROUND_ENV
 #          echo "PLAYGROUND_ENV=play-$(CI_COMMIT_REF_SLUG:0:25}
 
@@ -33,11 +33,21 @@ jobs:
 #  BRANCH_HOSTNAME=$PLAYGROUND_ENV.p.mycircutor.com
 #  DYNAMIC_ENVIRONMENT_URL=https://$BRANCH_HOSTNAME
 
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
 
       - name: Build the Docker image
         run: |
           make build-api VERSION=$buildVersion
-          make push-api VERSION=$buildVersion
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
+
+      - name: Push the Docker image
+        run: make push-api VERSION=$buildVersion
 
       - name: Run a multi-line script
         run: |
