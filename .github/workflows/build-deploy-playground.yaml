@@ -34,15 +34,6 @@ jobs:
       - name: Get Vars
         run: export
 
-      #          echo "PLAYGROUND_ENV=play-$(CI_COMMIT_REF_SLUG:0:25}
-
-
-#  BRANCH_DATABASE=`echo "$PLAYGROUND_ENV" | tr - _`
-#  POSTGRES_URI=$PLAYGROUND_PG/$BRANCH_DATABASE
-#  REDIS_URI=$DEV_REDIS/${CI_COMMIT_REF_SLUG%%-*}
-#  BRANCH_HOSTNAME=$PLAYGROUND_ENV.p.mycircutor.com
-#
-
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
