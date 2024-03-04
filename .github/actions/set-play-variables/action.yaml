@@ -8,7 +8,7 @@ runs:
         echo "PLAY_buildVersion=$PLAY_buildVersion" >> "$GITHUB_ENV"
         PLAY_ENV=play-${GITHUB_REF_NAME:0:25}
         echo "PLAY_ENV=$PLAY_ENV" >> "$GITHUB_ENV"
-        PLAY_DATABASE=`echo "PLAY_ENV" | tr - _`
+        PLAY_DATABASE=`echo "$PLAY_ENV" | tr - _`
         echo "PLAY_DATABASE=$PLAY_DATABASE" >> "$GITHUB_ENV"
         export PLAY_HOSTNAME=$PLAY_ENV.pe.maulabs.cat
         echo "PLAY_HOSTNAME=$PLAY_HOSTNAME" >> "$GITHUB_ENV"
