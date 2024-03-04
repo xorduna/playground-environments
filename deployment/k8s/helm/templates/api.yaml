@@ -24,6 +24,9 @@ spec:
               value: "{{ .Values.api.tag }}"
             - name: DB_URI
               value: "{{ .Values.db.uri }}"
+            - name: ENV
+              value: "{{ .Values.global.environment }}"
+
           ports:
             - name: att-api-port
               containerPort: {{ .Values.api.port }}
@@ -63,11 +66,11 @@ metadata:
 spec:
   ingressClassName: kong
   tls:
-    - secretName: {{ .Values.global.host }}
+    - secretName: {{ .Values.global.hostname }}
       hosts:
-        - {{ .Values.global.host }}
+        - {{ .Values.global.hostname }}
   rules:
-    - host: {{ .Values.global.host }}
+    - host: {{ .Values.global.hostname }}
       http:
         paths:
           - path: /

@@ -87,3 +87,13 @@ jobs:
       - name: Deploy Playground
         run: |
           echo "Deploying $buildVersion to $PLAY_HOSTNAME using DATABASE $DEV_POSTGRES/$PLAY_DATABASE"
+          yq e '.api.tag = "$buildVersion"' -n > deploy.tags.yaml
+          helm upgrade --install $PLAY_ENV deployment/k8s/chart \
+              -f deployment/k8s/chart/values.yaml \
+              -f deployment/k8s/environments/playground-values.yaml \
+              -f deploy.tags.yaml \
+              --set global.hostname=$PLAY_HOSTNAME \
+              --set global.environment=$PLAY_ENV \
+              --set db.uri=$PLAY_POSTGRES_URI?sslmode=require \
+              --description "Deploy $buildVersion to $updatedTags" \
+              --debug --wait

@@ -1,8 +1,8 @@
 global:
   releaseTime: "epoch"
-  env: "local"
+  environment: "local"
   container: registry.digitalocean.com/maulabs
-  host: "localhost"
+  hostname: "attendance.local"
   imagePullPolicy: "Always"
 
 
